@@ -86,9 +86,10 @@ classdef OneLeggedHopper < OutputCLASS
             x     = 0; 
             y     = 1.2;
             phi   = 0.1;
-            alpha = 0.1;
+            alpha = -0.1;
             l     = 1;
-            [f,v,c] = GetOneLeggedHopperPatch(x,y,phi,alpha,l,obj.epsilon,obj.edges,obj.colors);
+            u     = -[0.4;0.2];
+            [f,v,c] = GetOneLeggedHopperPatch(x,y,phi,alpha,l,u,obj.epsilon,obj.edges,obj.colors);
             p = patch('faces', f, 'vertices', v, 'FaceVertexCData', c, 'FaceColor', 'flat');
             if full3D
                 set(p, 'FaceLighting','phong');  % Set the renderer
@@ -121,13 +122,14 @@ classdef OneLeggedHopper < OutputCLASS
             %% Create illumination:
             light('Position',[5 -15 12],'Style','local');   % parallel light, coming in the direction given in 'Position'
         end
-        function obj = update(obj, state, epsilon)
+        function obj = update(obj, state, tau, epsilon)
             % rewrite state in more usable names
             x     = state(1);
             y     = state(2);
             phi   = state(3);
             alpha = state(4);
             l     = state(5);
+            u     = tau(:);
 
             % The floor is shifted to multiples of its pattern, so it's
             % not noticeable in the final graphics: 
@@ -136,7 +138,7 @@ classdef OneLeggedHopper < OutputCLASS
                                   [floor(x/2)*2,0,-0.05]);
             set(obj.FloorPatch,'Vertices',v); % Main body    
             % The hopper:
-            [~, v] = GetOneLeggedHopperPatch(x,y,phi,alpha,l,epsilon,obj.edges,obj.colors);
+            [~, v] = GetOneLeggedHopperPatch(x,y,phi,alpha,l,u,epsilon,obj.edges,obj.colors);
             set(obj.HopperPatch,'Vertices',v); 
             % Set camera:
             camtarget([x, 0, +1.1])

@@ -16,11 +16,11 @@ function trajectories = getContinuationTrajectories(LC,type,conParRange,conParSi
 
     nDomain    = length(tSize);
     
-    trajectories = struct('t',cell(conParSize,nDomain),'x',cell(conParSize,nDomain),typeChar,cell(conParSize,nDomain));
+    trajectories = struct('t',cell(conParSize,nDomain),'x',cell(conParSize,nDomain),'tau',cell(conParSize,nDomain),typeChar,cell(conParSize,nDomain));
     dataOld      = cell(1,nDomain);
     % allocate space
     for iDomain = 1:nDomain
-        dataOld{iDomain} = zeros(numLC,(nState+1)*tSize(iDomain));
+        dataOld{iDomain} = zeros(numLC,(nState+1+2)*tSize(iDomain));
     end
     conParOld = zeros(numLC,1);
     
@@ -62,7 +62,8 @@ function trajectories = getContinuationTrajectories(LC,type,conParRange,conParSi
         for iConPar = 1:conParSize
            N = tSize(iDomain);
            trajectories(iConPar,iDomain).t = traj(iConPar,1:N)';
-           trajectories(iConPar,iDomain).x = reshape(traj(iConPar,N+1:end),[N,nState]);
+           trajectories(iConPar,iDomain).tau = reshape(traj(iConPar,N+(1:2*N)),[N,2]);
+           trajectories(iConPar,iDomain).x = reshape(traj(iConPar,3*N+1:end),[N,nState]);
            trajectories(iConPar,iDomain).(typeChar) = conParNew(iConPar);
         end
     end
@@ -73,9 +74,11 @@ function trajectories = getContinuationTrajectories(LC,type,conParRange,conParSi
         for iDom = 1:nDom
             tIN = trajDataIN(iDom).t;
             xIN  = trajDataIN(iDom).x;
+            tauIN = trajDataIN(iDom).tau;
             tOUT = linspace(tIN(1),tIN(end),tSize(iDom))';
             xOUT = interp1(tIN,xIN,tOUT,'spline');
-            trajDataCell{iDom} = [tOUT',xOUT(:)'];
+            tauOut = interp1(tIN,tauIN,tOUT,'spline');
+            trajDataCell{iDom} = [tOUT',tauOut(:)',xOUT(:)'];
         end
     end
 end

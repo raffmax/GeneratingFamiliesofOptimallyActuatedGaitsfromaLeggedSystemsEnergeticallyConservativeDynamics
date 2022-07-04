@@ -22,7 +22,7 @@ end
 colors.torso     = [220, 220, 220]/255;
 colors.innerTube = [220, 220, 220]/255;
 colors.outerTube = [70, 70, 70]/255;
-colors.spring    = [0,0,205]/255; 
+colors.spring    = [10, 81, 131]/255; 
 
 % check if we simulate with or without pitch
 if size(dataIN(1,1).x,2) == 8
@@ -74,9 +74,11 @@ for iCon = contIDX
     if ~isnan(dt)
         t = tData(1):dt:tData(end-1);
         x = interp1(tData,data(iCon,iDomain).x,t);
+        u = interp1(tData,data(iCon,iDomain).tau,t);
     else
         t = tData;
         x = data(iCon,iDomain).x;
+        u = data(iCon,iDomain).tau;
     end
    
     
@@ -103,10 +105,11 @@ for iCon = contIDX
     
     for i=1:length(t)
         state_  = x(i,:);
+        u_      = u(i,:);
         epsilon = epsilonArray(i);
         E0      = E0Array(i);
 
-        update(hopper_graphic, state_', epsilon);
+        update(hopper_graphic, state_', u_, epsilon);
 
         switch type
             case 'epsilon'

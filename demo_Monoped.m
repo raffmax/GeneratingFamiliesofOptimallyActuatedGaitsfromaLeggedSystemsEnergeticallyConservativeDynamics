@@ -204,3 +204,16 @@ frameEps1 = getAnimationHopper5DOF(LCopt.getLCend.getTrajectory(dt),1,false);
 % export as gif
 movie2gif(frameEps0, 'MonopedPassive.gif','DelayTime',.05,'LoopCount',Inf)
 movie2gif(frameEps1, 'MonopedActive.gif','DelayTime',.05,'LoopCount',Inf)
+
+%% Animation
+xDot_avg = 1;
+LCopt           = LCopt.getLCstart;
+epsSize      = 35;
+tSize        = 51*ones(1,2);
+trajData = LCopt.getContinuationTrajectories('epsilon',[0,1],epsSize,tSize);
+full3D       = false;
+fixedParam.symbol = '\dot{x}_\mathrm{avg}';
+fixedParam.value  = xDot_avg;
+fixedParam.unit   = '';
+dt = 3e-2; % interpolate trajData again
+createAnimationContinuationHopper(trajData,'epsilon',fixedParam,full3D,3,dt)
