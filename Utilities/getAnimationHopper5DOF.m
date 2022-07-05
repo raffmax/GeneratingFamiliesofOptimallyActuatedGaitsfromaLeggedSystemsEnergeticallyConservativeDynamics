@@ -12,7 +12,7 @@ end
 colors.torso     = [220, 220, 220]/255;
 colors.innerTube = [220, 220, 220]/255;
 colors.outerTube = [70, 70, 70]/255;
-colors.spring    = [0,0,205]/255; 
+colors.spring    = [10,81,131]/255; 
 
 % stateIn  = [x,y,phi,alpha,l]
 
@@ -24,8 +24,9 @@ for iDomain = 1:size(data,2)
     frame_counter = 1;
     for i=1:length(data(iDomain).t)
         state_ = data(iDomain).x(i,:)';
+        tau_   = data(iDomain).tau(i,:)';
 
-        update(hopper_graphic, state_', epsilon);
+        update(hopper_graphic, state_', tau_', epsilon);
         % append
         F(frame_counter) = getframe(gcf);
         frame_counter = frame_counter + 1;
